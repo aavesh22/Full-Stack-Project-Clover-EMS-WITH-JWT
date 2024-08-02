@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "clover-ems": {
+      "hosting": {
+        "clover-ems": [
+          "clover-ems"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "clover-ems"
+  }
+}

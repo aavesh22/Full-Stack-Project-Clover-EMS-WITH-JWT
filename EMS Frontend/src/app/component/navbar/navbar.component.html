@@ -1,0 +1,23 @@
+<nav>
+  <a href="#" class="brand">
+    <img src="assets/shamrock.png" alt="Shamrock Logo">
+    <span class="text ml-2">Clover EMS</span>
+  </a>
+
+  <ul class="nav-links">
+    <li>
+      <a href="#" class="profile">
+        <img src="assets/Profile men.jpg" alt="Profile Image">
+      </a>
+    </li>
+    <li>
+      <input type="checkbox" id="switch-mode" hidden (change)="toggleDarkMode()">
+      <label for="switch-mode" class="switch-mode"></label>
+    </li>
+    <li>
+      <a href="#" class="logout">
+        <button class="btn btn-warning" (click)="logout()">Logout</button>
+      </a>
+    </li>
+  </ul>
+</nav>

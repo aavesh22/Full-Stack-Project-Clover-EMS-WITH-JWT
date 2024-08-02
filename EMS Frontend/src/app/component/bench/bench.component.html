@@ -1,0 +1,226 @@
+<div class="table-data">
+    <div class="order">
+        <div class="head d-flex justify-content-between align-items-center mb-3">
+            <h3 class="flex-grow-1">Bench</h3>
+
+            <div class="input-group search-bar">
+                <input type="text" class="form-control" placeholder="Search employee name" [(ngModel)]="searchText"
+                    (input)="searchEmployee()" />
+                <button class="btn btn-outline-secondary" type="button" (click)="searchEmployee()">
+                    <i class='bx bx-search me-2'></i>
+                </button>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-outline-success me-2" data-bs-toggle="modal"
+                    data-bs-target="#employeeModal" (click)="resetForm()">Add Employee</button>
+                <label class="btn btn-outline-info me-2" for="fileUpload">
+                    Upload File
+                    <input type="file" id="fileUpload" (change)="onFileChange($event)" accept=".xlsx, .xls, .csv"
+                        class="d-none" />
+                </label>
+                <button class="btn btn-primary me-2" (click)="exportexcel()">Download File <i
+                        class='bx bxs-cloud-download'></i></button>
+                <input type="month" class="form-control me-2" id="monthPicker" placeholder="Choose Month & Year"
+                    (change)="onDateChange($event)" style="max-width: 200px;" />
+            </div>
+        </div>
+
+
+        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Sr.No</th>
+                        <th scope="col">Employee Code</th>
+                        <th scope="col">Employee Name</th>
+                        <th scope="col">Clover DOJ</th>
+                        <th scope="col">Qualification</th>
+                        <th scope="col">Technology</th>
+                        <th scope="col">Lateral Hire / Academy</th>
+                        <th scope="col">Experience</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="filteredEmployeeList.length === 0">
+                        <td colspan="10" class="text-center">No employees found</td>
+                    </tr>
+                    <tr *ngFor="let employee of filteredEmployeeList; let i = index">
+                        <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                        <td>{{employee.employeeCode}}</td>
+                        <td>{{employee.employeeName}}</td>
+                        <td>{{employee.cloverDoj}}</td>
+                        <td>{{employee.qualification}}</td>
+                        <td>{{employee.technology}}</td>
+                        <td>{{employee.lateralHireOrAcademy}}</td>
+                        <td>{{employee.experience}}</td>
+                        <td>{{employee.location}}</td>
+                        <td>
+                            <div class="d-flex justify-content-between">
+                                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal"
+                                    data-bs-target="#employeeModal" (click)="editEmployee(employee)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" (click)="openDeleteModal(employee)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="pagination">
+            <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+            <span>Page {{currentPage}} of {{totalPages()}}</span>
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages()">Next</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal for adding or updating an employee -->
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="employeeModalLabel">
+                    {{ isEditing? 'Update Employee' : 'Add Employee' }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="employeeCode" name="employeeCode"
+                                    [(ngModel)]="employeeCode">
+                                <label for="employeeCode">Employee Code</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="employeeName" name="employeeName"
+                                    [(ngModel)]="employeeName">
+                                <label for="employeeName">Employee Name</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="date" class="form-control" id="cloverDoj" name="cloverDoj"
+                                    [(ngModel)]="cloverDoj">
+                                <label for="cloverDoj">Clover DOJ</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="qualification" name="qualification"
+                                    [(ngModel)]="qualification">
+                                <label for="qualification">Qualification</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="technology" name="technology"
+                                    [(ngModel)]="technology">
+                                <label for="technology">Technology</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="lateralHireOrAcademy" name="lateralHireOrAcademy"
+                                    [(ngModel)]="lateralHireOrAcademy">
+                                    <option value="">Select</option>
+                                    <option value="Lateral Hire">Lateral Hire</option>
+                                    <option value="Academy">Academy</option>
+                                </select>
+                                <label for="lateralHireOrAcademy">Lateral Hire / Academy</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="experience" name="experience"
+                                    [(ngModel)]="experience">
+                                <label for="experience">Experience</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="location" name="location"
+                                    [(ngModel)]="location">
+                                <label for="location">Location</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="modal-footer">
+                <button *ngIf="!isEditing" class="btn btn-outline-success" data-bs-dismiss="modal"
+                    (click)="addEmployee()">
+                    Add Employee
+                </button>
+
+                <div class="btn-group" *ngIf="isEditing">
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal"
+                        (click)="updateEmployee()">
+                        Update Employee
+                    </button>
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="cancelEdit()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for successful upload -->
+<div *ngIf="showUploadSuccessModal" class="modal-backdrop fade show"></div>
+<div *ngIf="showUploadSuccessModal" class="modal fade show d-block" tabindex="-1"
+    aria-labelledby="uploadResultModalLabel" aria-modal="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadResultModalLabel">Upload File</h5>
+                <button type="button" class="btn-close" (click)="closeUploadSuccessModal()"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ uploadMessage }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="closeUploadSuccessModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for delete -->
+<div *ngIf="showDeleteModal" class="modal-backdrop fade show"></div>
+<div *ngIf="showDeleteModal" class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button type="button" class="btn-close" (click)="closeDeleteModal()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete {{ employeeToDelete?.employeeName }}?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">Cancel</button>
+                <button type="button" class="btn btn-danger" (click)="confirmDeleteEmployee()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>

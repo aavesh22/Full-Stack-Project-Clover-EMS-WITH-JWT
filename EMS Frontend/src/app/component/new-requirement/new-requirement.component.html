@@ -1,0 +1,251 @@
+<div class="table-data">
+    <div class="order">
+        <div class="head d-flex justify-content-between align-items-center mb-3">
+            <h3 class="flex-grow-1">New Requirement</h3>
+
+            <div class="input-group search-bar">
+                <input type="text" class="form-control" placeholder="Search sales person name" [(ngModel)]="searchText"
+                    (input)="searchNewRequirement()" />
+                <button class="btn btn-outline-secondary" type="button" (click)="searchNewRequirement()">
+                    <i class='bx bx-search me-2'></i>
+                </button>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-outline-success me-2" data-bs-toggle="modal"
+                    data-bs-target="#newRequirementModal" (click)="resetForm()">Add New Requirement</button>
+                <label class="btn btn-outline-info me-2" for="fileUpload">
+                    Upload File
+                    <input type="file" id="fileUpload" (change)="onFileChange($event)" accept=".xlsx, .xls, .csv"
+                        class="d-none" />
+                </label>
+                <button class="btn btn-primary me-2" (click)="exportexcel()">Download File <i
+                        class='bx bxs-cloud-download'></i></button>
+                        <input type="month" class="form-control me-2" id="monthPicker" placeholder="Choose Month & Year"
+                        (change)="onDateChange($event)" style="max-width: 200px;" />
+            </div>
+        </div>
+
+        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Sr.No</th>
+                        <th scope="col">Sales Person</th>
+                        <th scope="col">Delivery Head</th>
+                        <th scope="col">Requirement Record Date</th>
+                        <th scope="col">Customer Name</th>
+                        <th scope="col">Opportunity</th>
+                        <th scope="col">LTC</th>
+                        <th scope="col">PO Received</th>
+                        <th scope="col">Experience</th>
+                        <th scope="col">Number of Requirements</th>
+                        <th scope="col">Per Month Value</th>
+                        <th scope="col">Delivery Group</th>
+                        <th scope="col">Closed</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="filteredNewRequirementList.length === 0">
+                        <td colspan="15" class="text-center">No new requirements found</td>
+                    </tr>
+                    <tr *ngFor="let newRequirement of filteredNewRequirementList; let i = index">
+                        <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                        <td>{{newRequirement.salesPerson}}</td>
+                        <td>{{newRequirement.deliveryHead}}</td>
+                        <td>{{newRequirement.requirementRecordDate}}</td>
+                        <td>{{newRequirement.customerName}}</td>
+                        <td>{{newRequirement.opportunity}}</td>
+                        <td>{{newRequirement.ltc}}</td>
+                        <td>{{newRequirement.poReceived}}</td>
+                        <td>{{newRequirement.experience}}</td>
+                        <td>{{newRequirement.numberOfRequirements}}</td>
+                        <td>{{newRequirement.perMonthValue}}</td>
+                        <td>{{newRequirement.deliveryGroup}}</td>
+                        <td>{{newRequirement.closed}}</td>
+                        <td>{{newRequirement.location}}</td>
+                        <td>
+                            <div class="d-flex justify-content-between">
+                                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal"
+                                    data-bs-target="#newRequirementModal" (click)="editNewRequirement(newRequirement)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" (click)="deleteNewRequirement(newRequirement)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="pagination">
+            <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+            <span>Page {{currentPage}} of {{totalPages()}}</span>
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages()">Next</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for adding or updating a new requirement -->
+<div class="modal fade" id="newRequirementModal" tabindex="-1" aria-labelledby="newRequirementModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newRequirementModalLabel">
+                    {{ isEditing? 'Update New Requirement' : 'Add New Requirement' }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="salesPerson" name="salesPerson"
+                                    [(ngModel)]="salesPerson">
+                                <label for="salesPerson">Sales Person</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="deliveryHead" name="deliveryHead"
+                                    [(ngModel)]="deliveryHead">
+                                <label for="deliveryHead">Delivery Head</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="date" class="form-control" id="requirementRecordDate"
+                                    name="requirementRecordDate" [(ngModel)]="requirementRecordDate">
+                                <label for="requirementRecordDate">Requirement Record Date</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="customerName" name="customerName"
+                                    [(ngModel)]="customerName">
+                                <label for="customerName">Customer Name</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="opportunity" name="opportunity"
+                                    [(ngModel)]="opportunity">
+                                <label for="opportunity">Opportunity</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="ltc" name="ltc" [(ngModel)]="ltc">
+                                <label for="ltc">LTC</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="poReceived" name="poReceived"
+                                    [(ngModel)]="poReceived">
+                                <label for="poReceived">PO Received</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="experience" name="experience"
+                                    [(ngModel)]="experience">
+                                <label for="experience">Experience</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="numberOfRequirements"
+                                    name="numberOfRequirements" [(ngModel)]="numberOfRequirements">
+                                <label for="numberOfRequirements">Number of Requirements</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="perMonthValue" name="perMonthValue"
+                                    [(ngModel)]="perMonthValue">
+                                <label for="perMonthValue">Per Month Value</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="deliveryGroup" name="deliveryGroup"
+                                    [(ngModel)]="deliveryGroup">
+                                <label for="deliveryGroup">Delivery Group</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="closed" name="closed" [(ngModel)]="closed">
+                                <label for="closed">Closed</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="location" name="location"
+                                    [(ngModel)]="location">
+                                <label for="location">Location</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="modal-footer">
+                <button *ngIf="!isEditing" class="btn btn-outline-success" data-bs-dismiss="modal"
+                    (click)="addNewRequirement()">
+                    Add Employee
+                </button>
+
+                <div class="btn-group" *ngIf="isEditing">
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal"
+                        (click)="updateNewRequirement()">
+                        Update Employee
+                    </button>
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="cancelEdit()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for successful upload -->
+<div *ngIf="showUploadSuccessModal" class="modal-backdrop fade show"></div>
+<div *ngIf="showUploadSuccessModal" class="modal fade show d-block" tabindex="-1" aria-labelledby="uploadResultModalLabel" aria-modal="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadResultModalLabel">Upload File</h5>
+        <button type="button" class="btn-close" (click)="closeUploadSuccessModal()"></button>
+      </div>
+      <div class="modal-body">
+        <p>{{ uploadMessage }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="closeUploadSuccessModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

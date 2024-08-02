@@ -1,0 +1,11 @@
+{
+  "hosting": [
+    {
+      "target": "clover-ems",
+      "source": ".",
+      "frameworksBackend": {
+        "region": "us-central1"
+      }
+    }
+  ]
+}

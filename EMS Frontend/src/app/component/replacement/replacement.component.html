@@ -1,0 +1,219 @@
+<div class="table-data">
+    <div class="order">
+        <div class="head d-flex justify-content-between align-items-center mb-3">
+            <h3 class="flex-grow-1">Replacement</h3>
+
+            <div class="input-group search-bar">
+                <input type="text" class="form-control" placeholder="Search replacement" [(ngModel)]="searchText"
+                    (input)="searchReplacement()" />
+                <button class="btn btn-outline-secondary" type="button" (click)="searchReplacement()">
+                    <i class='bx bx-search me-2'></i>
+                </button>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-outline-success me-2" data-bs-toggle="modal"
+                    data-bs-target="#replacementModal" (click)="resetForm()">Add New Replacement</button>
+                <label class="btn btn-outline-info me-2" for="fileUpload">
+                    Upload File
+                    <input type="file" id="fileUpload" (change)="onFileChange($event)" accept=".xlsx, .xls, .csv"
+                        class="d-none" />
+                </label>
+                <button class="btn btn-primary me-2" (click)="exportexcel()">Download File <i
+                        class='bx bxs-cloud-download'></i></button>
+                        <input type="month" class="form-control me-2" id="monthPicker" placeholder="Choose Month & Year"
+                        (change)="onDateChange($event)" style="max-width: 200px;" />
+            </div>
+        </div>
+
+        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Sr.No</th>
+                        <th scope="col">Replacement Needed Before</th>
+                        <th scope="col">Billing Rate</th>
+                        <th scope="col">Account Type</th>
+                        <th scope="col">Yet to Join</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Delivery Group</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Tech Group</th>
+                        <th scope="col">Month Group</th>
+                        <th scope="col">Current Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="filteredReplacementList.length === 0">
+                        <td colspan="12" class="text-center">No replacements found</td>
+                    </tr>
+                    <tr *ngFor="let replacement of filteredReplacementList; let i = index">
+                        <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                        <td>{{replacement.replacementNeededBefore}}</td>
+                        <td>{{replacement.billingRate}}</td>
+                        <td>{{replacement.accountType}}</td>
+                        <td>{{replacement.yetToJoin}}</td>
+                        <td>{{replacement.location}}</td>
+                        <td>{{replacement.deliveryGroup}}</td>
+                        <td>{{replacement.type}}</td>
+                        <td>{{replacement.techGroup}}</td>
+                        <td>{{replacement.monthGroup}}</td>
+                        <td>{{replacement.currentStatus}}</td>
+                        <td>
+                            <div class="d-flex justify-content-between">
+                                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal"
+                                    data-bs-target="#replacementModal" (click)="editReplacement(replacement)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" (click)="deleteReplacement(replacement)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="pagination">
+            <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+            <span>Page {{currentPage}} of {{totalPages()}}</span>
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages()">Next</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for adding or updating a replacement -->
+<div class="modal fade" id="replacementModal" tabindex="-1" aria-labelledby="replacementModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replacementModalLabel">
+                    {{ isEditing? 'Update Replacement' : 'Add New Replacement' }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="date" class="form-control" id="replacementNeededBefore"
+                                    name="replacementNeededBefore" [(ngModel)]="replacementNeededBefore">
+                                <label for="replacementNeededBefore">Replacement Needed Before</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="billingRate" name="billingRate"
+                                    [(ngModel)]="billingRate">
+                                <label for="billingRate">Billing Rate</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="accountType" name="accountType"
+                                    [(ngModel)]="accountType">
+                                <label for="accountType">Account Type</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="yetToJoin" name="yetToJoin"
+                                    [(ngModel)]="yetToJoin">
+                                <label for="yetToJoin">Yet to Join</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="location" name="location"
+                                    [(ngModel)]="location">
+                                <label for="location">Location</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="deliveryGroup" name="deliveryGroup"
+                                    [(ngModel)]="deliveryGroup">
+                                <label for="deliveryGroup">Delivery Group</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="type" name="type" [(ngModel)]="type">
+                                <label for="type">Type</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="techGroup" name="techGroup"
+                                    [(ngModel)]="techGroup">
+                                <label for="techGroup">Tech Group</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="monthGroup" name="monthGroup"
+                                    [(ngModel)]="monthGroup">
+                                <label for="monthGroup">Month Group</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="currentStatus" name="currentStatus"
+                                    [(ngModel)]="currentStatus">
+                                <label for="currentStatus">Current Status</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button *ngIf="!isEditing" class="btn btn-outline-success" data-bs-dismiss="modal"
+                    (click)="addReplacement()">
+                    Add Replacement
+                </button>
+
+                <div class="btn-group" *ngIf="isEditing">
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal"
+                        (click)="updateReplacement()">
+                        Update Replacement
+                    </button>
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="cancelEdit()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for successful upload -->
+<div *ngIf="showUploadSuccessModal" class="modal-backdrop fade show"></div>
+<div *ngIf="showUploadSuccessModal" class="modal fade show d-block" tabindex="-1" aria-labelledby="uploadResultModalLabel" aria-modal="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadResultModalLabel">Upload File</h5>
+        <button type="button" class="btn-close" (click)="closeUploadSuccessModal()"></button>
+      </div>
+      <div class="modal-body">
+        <p>{{ uploadMessage }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="closeUploadSuccessModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="dashboardComponent">
+  <section id="content">
+    <app-navbar></app-navbar>
+    <main>
+      <div class="head-title">
+        <div class="left">
+          <h1>Dashboard</h1>
+          <ul class="breadcrumb">
+            <li>
+              <a href="#">Dashboard</a>
+            </li>
+            <li><i class='bx bx-chevron-right'></i></li>
+            <li>
+              <a class="active" href="#">Home</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-box">
+          <canvas #pieChart></canvas>
+        </div>
+        <div class="chart-box">
+          <canvas #barChart></canvas>
+        </div>
+      </div>
+
+      <ul class="box-info">
+        <li (click)="navigateTo('bench')">
+          <i class="fas fa-chalkboard-teacher" style="color: #f05532;"></i>
+          <span class="text">
+            <h3 id="benchCount">{{ benchCount }}</h3>
+            <p>Bench</p>
+          </span>
+        </li>
+        <li (click)="navigateTo('new-requirement')">
+          <i class="fas fa-tasks" style="color: #3498DB;"></i>
+          <span class="text">
+            <h3 id="newRequirementCount">{{ newRequirementCount }}</h3>
+            <p>New Requirement</p>
+          </span>
+        </li>
+        <li (click)="navigateTo('replacement')">
+          <i class="fas fa-exchange-alt" style="color: #27AE60;"></i>
+          <span class="text">
+            <h3 id="replacementCount">{{ replacementCount }}</h3>
+            <p>Replacement</p>
+          </span>
+        </li>
+      </ul>
+
+      <router-outlet></router-outlet>
+    </main>
+  </section>
+</div>

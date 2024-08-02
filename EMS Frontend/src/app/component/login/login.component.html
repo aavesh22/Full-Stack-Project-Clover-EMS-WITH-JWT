@@ -1,0 +1,58 @@
+<div class="container-fluid loginComponent">
+  <div class="row justify-content-center">
+    <div class="col-md-4 mt-5 ">
+      <div class="card shadow">
+        <div class="card-body">
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <h4 class="text-light">Login</h4>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" formControlName="email">
+              <div *ngIf="submitted && f['email'].errors" class="text-danger">
+                <div *ngIf="f['email'].errors['required']">Email is required</div>
+                <div *ngIf="f['email'].errors['email']">Email must be a valid email address</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" formControlName="password">
+              <div *ngIf="submitted && f['password'].errors" class="text-danger">
+                <div *ngIf="f['password'].errors['required']">Password is required</div>
+                <div *ngIf="f['password'].errors['minlength']">Password must be at least 8 characters long</div>
+              </div>
+            </div>
+            <div *ngIf="loginError" class="text-danger mb-3">
+              {{ loginError }}
+            </div>
+            <button type="submit" class="btn btn-info w-100">Login</button>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <a href="/register" style="text-decoration: none;color: white;">Need Account? <span class="text-danger">Register</span></a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Login Successful</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        You have successfully logged in.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="navigateToDashboard()">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
